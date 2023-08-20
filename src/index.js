@@ -22,32 +22,48 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-function writeUserData(sku, name, ppd, min_spendings) {
-    const db = getDatabase();
-    set(ref(db, 'products/' + sku), {
-      name: name,
-      PPD: ppd,
-      min_spendings : min_spendings
-    });
-  }
-
 const dbRef = ref(getDatabase());
 
-function getProducts(callback){
-  get(child(dbRef, 'products')).then((snapshot) => {
+//DB funcs
+
+/**
+ * Retrieves the time the database was last updated, converts to a string, and passes it to the callback function.
+ *
+ * @param {function} callback - The callback function to be executed with the last updated string.
+ * @return {void} 
+ */
+function getLastUpdatedStr(callback){
+  get(child(dbRef, 'metadata/last_updated')).then((snapshot) => {
     if (snapshot.exists()) {
-      callback(snapshot.val());
+      callback(UnixTimeStampToLocaleStr(snapshot.val()));
     } else {
-      console.log("No data available");
+      console.log("No date data available");
     }
   }).catch((error) => {
     console.error(error);
   });
 }
 
-getProducts(after)
+/**
+ * Retrieves the products object from the database and invokes the provided callback function with the data.
+ *
+ * @param {function} callback - The callback function that will be called with the retrieved product data.
+ * @return {void}
+ */
 
-function after(prods){
+function getProducts(callback){
+  get(child(dbRef, 'products')).then((snapshot) => {
+    if (snapshot.exists()) {
+      callback(snapshot.val());
+    } else {
+      console.log("No product data available");
+    }
+  }).catch((error) => {
+    console.error(error);
+  });
+}
+
+function populate_table_from_product_object(prods){
     console.log(prods)
     if(prods){
         console.log(prods);
@@ -67,3 +83,14 @@ function after(prods){
         }
     }
 }
+
+
+function UnixTimeStampToLocaleStr(seconds){
+  return new Date(seconds * 1000).toLocaleString()
+}
+
+getProducts(populate_table_from_product_object)
+getLastUpdatedStr(function(datestr){
+  let elem = document.getElementById("last_updated")
+  elem.textContent = datestr
+})
