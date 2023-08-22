@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {collection, addDoc } from "firebase/firestore";
-import { getDatabase, ref, set, get, child } from "firebase/database";
+import { query, orderBy, limit } from "firebase/firestore";
+import { getDatabase, ref, set, get, child, orderByChild, orderByKey } from "firebase/database";
 import "./style.css";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,9 +19,11 @@ const firebaseConfig = {
   measurementId: "G-ELXCWED5EC"
 };
 
+const KEY_ORDER = ["name", "ppd", "min_spend", "img","end_date"]
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+const db = getDatabase();
 const dbRef = ref(getDatabase());
 
 //DB funcs
@@ -52,11 +54,11 @@ function getLastUpdatedStr(callback){
  */
 
 function getProducts(callback){
-  get(child(dbRef, 'products')).then((snapshot) => {
-    if (snapshot.exists()) {
+  const q = query(ref(db,'products'), orderByChild("ppd"));
+  get(q).then((snapshot) => {
+    console.log(snapshot)
+    if(snapshot.exists()){
       callback(snapshot.val());
-    } else {
-      console.log("No product data available");
     }
   }).catch((error) => {
     console.error(error);
@@ -66,18 +68,33 @@ function getProducts(callback){
 function populate_table_from_product_object(prods){
     console.log(prods)
     if(prods){
-        console.log(prods);
         const container = document.body
         const table = document.getElementById("products")
-        
+
+        for(const i in KEY_ORDER){
+            const key = KEY_ORDER[i]
+            const col = document.createElement("th");
+            const cell = document.createElement("td");
+            cell.textContent = key
+            col.appendChild(cell);
+            table.appendChild(col);
+        }
+
         for(const sku in prods){
             const row = document.createElement("tr");
             const obj = prods[sku]
-            for(const key in obj){
+            for(const i in KEY_ORDER){
+                const key = KEY_ORDER[i]
                 const val = obj[key];
+                if(key === "img"){
+                  const img = document.createElement("img");
+                  img.src = val;
+                  row.appendChild(img);
+              } else {
                 const cell = document.createElement("td");
-                cell.textContent = key + ": " + val + "     ";
+                cell.textContent = val;
                 row.appendChild(cell);
+              }
             }
             table.appendChild(row);
         }
