@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { query, orderBy, limit } from "firebase/firestore";
-import { getDatabase, ref, set, get, child, orderByChild, orderByKey } from "firebase/database";
+import { getDatabase, ref, set, get, child, limitToLast, orderByChild, orderByKey, orderByValue, query } from "firebase/database";
 import "./style.css";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -54,20 +53,21 @@ function getLastUpdatedStr(callback){
  */
 
 function getProducts(callback){
-  const q = query(ref(db,'products'), orderByChild("ppd"));
-  get(q).then((snapshot) => {
+  const topUserPostsRef = query(ref(db, 'products/'), orderByChild("ppd"));
+  get(topUserPostsRef).then((snapshot) => {
     console.log(snapshot)
-    if(snapshot.exists()){
-      callback(snapshot.val());
-    }
-  }).catch((error) => {
-    console.error(error);
+    let order = []
+    snapshot.forEach(element => {
+      let obj = {}
+      obj[element.key] = element.val();
+      order.unshift(obj)
+    })
+    callback(order)
   });
 }
 
-function populate_table_from_product_object(prods){
-    console.log(prods)
-    if(prods){
+function populate_table_from_product_object(productArray){
+    if(productArray){
         const container = document.body
         const table = document.getElementById("products")
 
@@ -80,9 +80,10 @@ function populate_table_from_product_object(prods){
             table.appendChild(col);
         }
 
-        for(const sku in prods){
+        for(const i in productArray){
+            const sku = Object.keys(productArray[i])[0]
             const row = document.createElement("tr");
-            const obj = prods[sku]
+            const obj = productArray[i][sku]
             for(const i in KEY_ORDER){
                 const key = KEY_ORDER[i]
                 const val = obj[key];
