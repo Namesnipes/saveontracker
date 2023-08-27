@@ -19,25 +19,34 @@ export class Firebase {
     static app = initializeApp(Firebase.firebaseConfig);
     static db = getDatabase();
     static dbRef = ref(getDatabase());
+    static productData;
+    static lastUpdateData;
 
     static async getLastUpdatedStr() {
+        if(Firebase.lastUpdateData) return Firebase.lastUpdateData
         const snapshot = await get(child(Firebase.dbRef, 'metadata/last_updated'))
+        console.log("Retreived last update from database")
         if (snapshot.exists()) {
-            return UnixTimeStampToLocaleStr(snapshot.val());
+            let data = UnixTimeStampToLocaleStr(snapshot.val());
+            Firebase.lastUpdateData = data;
+            return data;
         } else {
             console.log("No date data available");
         }
     }
 
-    static async getProducts(callback) {
+    static async getProducts() {
+        if(Firebase.productData) return Firebase.productData
         const topUserPostsRef = query(ref(Firebase.db, 'products/'), orderByChild("ppd"));
         const snapshot = await get(topUserPostsRef);
+        console.log("Retreived products from database")
         let order = []
         snapshot.forEach(element => {
             let obj = {}
             obj[element.key] = element.val();
             order.unshift(obj)
         })
+        Firebase.productData = order;
         return order
     }
 }
