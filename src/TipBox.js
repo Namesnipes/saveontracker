@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Firebase } from './Firebase';
 
-export function LastUpdated() {
+export function TipBox() {
     const [text, setText] = useState('Loading...');
     const ranOnce = useRef(false);
   
@@ -16,8 +16,10 @@ export function LastUpdated() {
     }, [ranOnce]); // empty dependency array to run effect only once
   
     return (
-      <div>
-        <h4>Last updated: {text}</h4>
+      <div id="Tips-container" className="col-lg-4 fs-5 lh-1 text-lg-end mt-4 mt-lg-0">
+        <p><strong>PPD:</strong> Points per dollar.</p>
+        <p><strong>Min. Spending:</strong> Minimum you must spend to earn points.</p>
+        <p><strong>Last Updated:</strong> {text}</p>
       </div>
     );
   }
