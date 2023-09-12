@@ -18,7 +18,7 @@ export function ItemBody() {
     }, [ranOnce])
   
     return (
-      <tbody>
+      <div>
         {items.map((obj) => {
           const [key, value] = Object.entries(obj)[0];
           const { name, ppd, min_spend, img, end_date } = value;
@@ -35,6 +35,6 @@ export function ItemBody() {
             />
           );
         })}
-      </tbody>
+      </div>
     );
   }

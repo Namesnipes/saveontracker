@@ -22,7 +22,6 @@ table, th, td {
   border-radius: 3em;
   border: 1px solid var(--bg);
   background: linear-gradient(270deg, rgba(97, 189, 69, 0.25) 0%, rgba(185, 227, 214, 0.25) 100%);
-  padding: 1% 1.8% 0.5%;
 }
 #Tips-container strong{
   font-weight: 600;
@@ -67,4 +66,17 @@ table, th, td {
   border-radius: 36em;
   background: rgba(97, 189, 69, 0.32);
   filter: blur(250px);
+}
+.Item-data{
+  font-size: 1.2em;
+}
+.Item-row{
+  border-radius: 50px;
+  background-color: #FCFCFC;
+}
+.Item-name{
+  color: black;
+}
+.Item-name:hover{
+  color:var(--accent-green);
 }

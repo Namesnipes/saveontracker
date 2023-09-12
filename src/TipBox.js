@@ -16,7 +16,7 @@ export function TipBox() {
     }, [ranOnce]); // empty dependency array to run effect only once
   
     return (
-      <div id="Tips-container" className="col-lg-4 fs-5 lh-1 text-lg-end mt-4 mt-lg-0">
+      <div id="Tips-container" className="col-lg-4 fs-5 lh-1 text-lg-end mt-4 mt-lg-0 p-4">
         <p><strong>PPD:</strong> Points per dollar.</p>
         <p><strong>Min. Spending:</strong> Minimum you must spend to earn points.</p>
         <p><strong>Last Updated:</strong> {text}</p>
