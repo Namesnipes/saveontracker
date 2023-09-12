@@ -6,14 +6,20 @@ export function TipBox() {
     const ranOnce = useRef(false);
   
     useEffect(() => {
-      if (!ranOnce.current) { // make sure were only running this function once again idk it was running twice before
+      //since data is retreived from the DB asynchronously, this effect will run 
+      //once when its first rendered then again a few seconds later when the data is retreived over the internets
+      //this check is here so it cant run a second time
+      if (!ranOnce.current) { 
         ranOnce.current = true;
+
+        //waits for the db to return our data then sets the "text" state
         Firebase.getLastUpdatedStr().then((value) => {
           setText(value);
           if(value === "") ranOnce.current = false;
         });
+
       }
-    }, [ranOnce]); // empty dependency array to run effect only once
+    }, [ranOnce]);
   
     return (
       <div id="Tips-container" className="col-lg-4 fs-5 lh-1 text-lg-end mt-4 mt-lg-0 p-4">
